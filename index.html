@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dad Jokes - Because Someone Has To</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #2c3e50;
+        }
+
+        #app {
+            width: 100%;
+            max-width: 700px;
+        }
+
+        .container {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 50px 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            font-family: 'Merriweather', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #34495e;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: #7f8c8d;
+            margin-bottom: 40px;
+            font-style: italic;
+        }
+
+        .joke-container {
+            background: #f8f9fa;
+            border-left: 4px solid #95a5a6;
+            border-radius: 10px;
+            padding: 40px 30px;
+            margin-bottom: 30px;
+            min-height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .joke-text {
+            font-family: 'Merriweather', serif;
+            font-size: 1.4rem;
+            line-height: 1.8;
+            color: #2c3e50;
+            font-weight: 300;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        button {
+            background: #34495e;
+            color: #ffffff;
+            border: none;
+            padding: 16px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Open Sans', sans-serif;
+            box-shadow: 0 4px 15px rgba(52, 73, 94, 0.2);
+        }
+
+        button:hover {
+            background: #2c3e50;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 73, 94, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 10px rgba(52, 73, 94, 0.2);
+        }
+
+        .footer {
+            margin-top: 40px;
+            color: #95a5a6;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 25px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .joke-text {
+                font-size: 1.2rem;
+            }
+
+            button {
+                padding: 14px 30px;
+                font-size: 1rem;
+            }
+        }
+
+        /* Fade animation for joke changes */
+        .fade-enter-active, .fade-leave-active {
+            transition: opacity 0.3s ease;
+        }
+
+        .fade-enter-from, .fade-leave-to {
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="container">
+            <h1>Dad Jokes</h1>
+            <p class="subtitle">Warning: May cause eye-rolling and groans</p>
+
+            <div class="joke-container">
+                <p class="joke-text">{{ currentJoke }}</p>
+            </div>
+
+            <div class="button-container">
+                <button @click="getRandomJoke">Get Another Joke</button>
+            </div>
+
+            <div class="footer">
+                <p>{{ jokesArray.length }} dad jokes and counting...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vue 3 CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <script>
+        const { createApp, ref, onMounted } = Vue;
+
+        createApp({
+            setup() {
+                // Reactive data
+                const currentJoke = ref('');
+                const lastJokeIndex = ref(-1);
+
+                // Array of 50+ dad jokes
+                const jokesArray = ref([
+                    "Why don't scientists trust atoms? Because they make up everything!",
+                    "I'm reading a book about anti-gravity. It's impossible to put down!",
+                    "Did you hear about the mathematician who's afraid of negative numbers? He'll stop at nothing to avoid them.",
+                    "Why do fathers take an extra pair of socks when they go golfing? In case they get a hole in one!",
+                    "What do you call a fake noodle? An impasta!",
+                    "Why did the scarecrow win an award? Because he was outstanding in his field!",
+                    "I used to hate facial hair, but then it grew on me.",
+                    "Why don't eggs tell jokes? They'd crack each other up!",
+                    "What do you call cheese that isn't yours? Nacho cheese!",
+                    "How does a penguin build its house? Igloos it together!",
+                    "What did the ocean say to the beach? Nothing, it just waved.",
+                    "Why did the bicycle fall over? Because it was two-tired!",
+                    "I only know 25 letters of the alphabet. I don't know y.",
+                    "What do you call a bear with no teeth? A gummy bear!",
+                    "Why can't you hear a pterodactyl go to the bathroom? Because the 'P' is silent!",
+                    "What's the best time to go to the dentist? Tooth-hurty!",
+                    "How do you organize a space party? You planet!",
+                    "Why did the coffee file a police report? It got mugged!",
+                    "What do you call a can opener that doesn't work? A can't opener!",
+                    "I'm on a seafood diet. I see food and I eat it.",
+                    "Why don't skeletons fight each other? They don't have the guts!",
+                    "What did one wall say to the other wall? I'll meet you at the corner!",
+                    "Why did the math book look so sad? Because it had too many problems.",
+                    "What do you call a pile of cats? A meowtain!",
+                    "How does the moon cut his hair? Eclipse it!",
+                    "What's orange and sounds like a parrot? A carrot!",
+                    "Why couldn't the bicycle stand up by itself? It was two tired!",
+                    "What do you call a sleeping bull? A bulldozer!",
+                    "I used to play piano by ear, but now I use my hands.",
+                    "Why did the golfer bring two pairs of pants? In case he got a hole in one!",
+                    "What do you call a fish wearing a bowtie? Sofishticated!",
+                    "How do you make a tissue dance? Put a little boogie in it!",
+                    "Why did the tomato turn red? Because it saw the salad dressing!",
+                    "What do you call a dinosaur with an extensive vocabulary? A thesaurus!",
+                    "Why don't oysters donate to charity? Because they're shellfish!",
+                    "What did the janitor say when he jumped out of the closet? Supplies!",
+                    "How do you make holy water? You boil the hell out of it!",
+                    "Why did the stadium get hot after the game? All of the fans left!",
+                    "What do you call a belt made of watches? A waist of time!",
+                    "Why can't you give Elsa a balloon? Because she will let it go!",
+                    "What did the grape do when it got stepped on? Nothing but let out a little wine!",
+                    "Why did the cookie go to the hospital? Because it felt crumbly!",
+                    "What do you call a snowman with a six-pack? An abdominal snowman!",
+                    "Why did the invisible man turn down the job offer? He couldn't see himself doing it!",
+                    "What's the difference between a poorly dressed man on a tricycle and a well-dressed man on a bicycle? Attire!",
+                    "Why don't scientists trust stairs? Because they're always up to something!",
+                    "What do you call a factory that makes okay products? A satisfactory!",
+                    "How do you follow Will Smith in the snow? You follow the fresh prints!",
+                    "Why did the Oreo go to the dentist? Because it lost its filling!",
+                    "What's brown and sticky? A stick!",
+                    "Why do seagulls fly over the ocean? Because if they flew over the bay, they'd be bagels!",
+                    "What do you call a magic dog? A Labracadabrador!",
+                    "Why did the kid throw his clock out the window? He wanted to see time fly!",
+                    "What do you call a cow with no legs? Ground beef!",
+                    "Why did the picture go to jail? Because it was framed!",
+                    "What do you call a parade of rabbits hopping backwards? A receding hare-line!",
+                    "Why was six afraid of seven? Because seven eight nine!",
+                    "What do you call a lazy kangaroo? A pouch potato!",
+                    "Why don't melons get married? Because they cantaloupe!",
+                    "What did the left eye say to the right eye? Between you and me, something smells!"
+                ]);
+
+                // Get random joke that's different from the last one
+                const getRandomJoke = () => {
+                    let randomIndex;
+
+                    // Make sure we don't show the same joke twice in a row
+                    do {
+                        randomIndex = Math.floor(Math.random() * jokesArray.value.length);
+                    } while (randomIndex === lastJokeIndex.value && jokesArray.value.length > 1);
+
+                    lastJokeIndex.value = randomIndex;
+                    currentJoke.value = jokesArray.value[randomIndex];
+                };
+
+                // Show a random joke when the page loads
+                onMounted(() => {
+                    getRandomJoke();
+                });
+
+                return {
+                    currentJoke,
+                    jokesArray,
+                    getRandomJoke
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
